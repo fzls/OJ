@@ -56,7 +56,6 @@ CAO, Peng
 using namespace std;
 
 
-
 void print_first(vector<int> &counts) {
     for (int i = 1; i < 10; ++i)
         if (counts[i] != 0) {
@@ -83,9 +82,9 @@ int main() {
         #endif
     }
     #pragma endregion
-    vector<int> counts = vector<int>(10);
+    auto counts = vector<int>(10);
 
-    for (int i = 0; i < 10; ++i) {
+    for (auto i = 0; i < 10; ++i) {
         cin >> counts[i];
     }
 
