@@ -1,1 +1,5 @@
-2016/02/16-20:06:37.561 222c Delete type=3 #1
+2016/02/17-09:24:48.851 b6c Recovering log #3
+2016/02/17-09:24:48.855 b6c Level-0 table #5: started
+2016/02/17-09:24:48.910 b6c Level-0 table #5: 138162 bytes OK
+2016/02/17-09:24:48.958 b6c Delete type=0 #3
+2016/02/17-09:24:48.958 b6c Delete type=3 #2

@@ -52,10 +52,23 @@ CAO, Peng
 #include <stack>
 #include <string>
 #include <vector>
+#include <climits>
+#include <unordered_map>
 
 using namespace std;
 
+const int NOT_SOLVED = INT_MIN;
 
+struct pair_hash {
+    template <class T1, class T2>
+    std::size_t operator () (const std::pair<T1, T2> &p) const {
+        auto h1 = std::hash<T1> {}(p.first);
+        auto h2 = std::hash<T2> {}(p.second);
+        // Mainly for demonstration purposes, i.e. works but is overly simple
+        // In the real world, use sth. like boost.hash_combine
+        return h1 ^ h2;
+    }
+};
 
 int find_max_m_by_binary_search(int m, vector<unsigned long long> &numbers, unsigned long long p) {
     //find the M that the max item that is <= key
@@ -65,12 +78,12 @@ int find_max_m_by_binary_search(int m, vector<unsigned long long> &numbers, unsi
     for (left = m, right = numbers.size() - 1; left < right;) {
         middle = (left + right) / 2;
 
-        if(numbers[middle] > key) {
+        if (numbers[middle] > key) {
             right = middle - 1;
         } else {
             left = middle;
 
-            if(left == right - 1) {
+            if (left == right - 1) {
                 if (numbers[right] <= key) {
                     left = right;
                 } else {
@@ -83,6 +96,23 @@ int find_max_m_by_binary_search(int m, vector<unsigned long long> &numbers, unsi
     return left;
 }
 
+int getMaxLen(int n, int m, unsigned long long p, vector<unsigned long long> &A,
+              unordered_map<pair<int, int>, int, pair_hash> &meno) {
+    pair<int, int> nm = make_pair(n, m);
+
+    if (meno.find(nm) != meno.end()) {
+        return meno[nm];
+    }
+
+    if (A[m] > A[n]*p) {
+        return meno[nm] = max(getMaxLen(n, m - 1, p, A, meno), getMaxLen(n + 1, m, p, A, meno));
+    } else {
+        return meno[nm] = m - n + 1;
+    }
+}
+
+
+
 int main() {
     #pragma region GET_INPUT
     {
@@ -92,7 +122,8 @@ int main() {
         #endif
     }
     #pragma endregion
-    unsigned long long n, p;
+    int n;
+    unsigned long long p;
     cin >> n >> p;
     auto numbers = vector<unsigned long long>(n);
 
@@ -110,5 +141,7 @@ int main() {
     }
 
     cout << max;
+    //unordered_map<pair<int, int>, int, pair_hash> meno_map ;
+    //cout << getMaxLen(0, n - 1, p, numbers, meno_map);
     return 0;
 }
