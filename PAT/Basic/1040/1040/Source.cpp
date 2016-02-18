@@ -145,50 +145,73 @@ int main() {
     //
     //    findPAT(0, 0);
     //    cout << cnt;
+    //    string pats;
+    //    cin >> pats;
+    //    vector<int> Ps;
+    //    vector<int> As;
+    //    vector<Util> pUtil;
+    //    Util tmp;
+    //    int posP = 0, posA = 0;
+    //    int np = 0, na = 0, nt = 0;
+    //
+    //    for (int i = pats.find_first_of('P'); i < pats.size(); ++i) {
+    //        if(pats[i] == 'P') {
+    //            np++;
+    //        } else if (pats[i] == 'A') {
+    //            tmp.number = np - posP;
+    //            tmp.next = na;
+    //            pUtil.push_back(tmp);
+    //            posP = np;
+    //            na++;
+    //        } else {
+    //            for (int a = posA; a < na; ++a) {
+    //                As.push_back(nt);
+    //            }
+    //
+    //            posA = na;
+    //            nt++;
+    //        }
+    //    }
+    //
+    //    int cnt = 0;
+    //
+    //    for (int p = 0; p < pUtil.size(); ++p) {
+    //        int _cnt = 0;
+    //
+    //        for (int a = pUtil[p].next; a < posA; ++a) {
+    //            _cnt += (nt - As[a]);
+    //        }
+    //
+    //        cnt += pUtil[p].number * _cnt;
+    //
+    //        if (cnt >= 1000000007) {
+    //            cnt -= 1000000007;
+    //        }
+    //    }
+    //!+sometime look in another way may be better
+    auto sumT = vector<int>(100001, 0);
     string pats;
     cin >> pats;
-    vector<int> Ps;
-    vector<int> As;
-    vector<Util> pUtil;
-    Util tmp;
-    int posP = 0, posA = 0;
-    int np = 0, na = 0, nt = 0;
 
-    for (int i = pats.find_first_of('P'); i < pats.size(); ++i) {
-        if(pats[i] == 'P') {
-            np++;
-        } else if (pats[i] == 'A') {
-            tmp.number = np - posP;
-            tmp.next = na;
-            pUtil.push_back(tmp);
-            posP = np;
-            na++;
+    for (int i = pats.size() - 1; i >= 0; --i) {
+        if (pats[i] == 'T') {
+            sumT[i] = sumT[i + 1] + 1;
         } else {
-            for (int a = posA; a < na; ++a) {
-                As.push_back(nt);
-            }
-
-            posA = na;
-            nt++;
+            sumT[i] = sumT[i + 1];
         }
     }
 
-    int cnt = 0;
+    int np = 0, cnt = 0;
 
-    for (int p = 0; p < pUtil.size(); ++p) {
-        int _cnt = 0;
-
-        for (int a = pUtil[p].next; a < posA; ++a) {
-            _cnt += (nt - As[a]);
-        }
-
-        cnt += pUtil[p].number * _cnt;
-
-        if (cnt >= 1000000007) {
-            cnt -= 1000000007;
+    for (int i = 0; i < pats.size(); ++i) {
+        if (pats[i] == 'P') {
+            np++;
+        } else if(pats[i] == 'A') {
+            cnt += (np * sumT[i + 1]) % 1000000007;
+            cnt %= 1000000007;
         }
     }
 
-    cout << cnt;
+    cout << cnt << endl;
     return 0;
 }
