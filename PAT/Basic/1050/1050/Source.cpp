@@ -60,143 +60,144 @@ using namespace std;
 //#define DEBUG
 
 #ifdef DEBUG
-    #define debug(format, ...) printf("[line:%d:@%s] "format, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define debug(format, ...) printf("[line:%d:@%s] " format, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #else
-    #define debug(...)
+#define debug(...)
 #endif
 
 enum Dir {
-    UPPER,
-    DOWN,
-    LEFT,
-    RIGHT
+	UPPER,
+	DOWN,
+	LEFT,
+	RIGHT
 };
 
 void print(vector<int> num, int m, int n) {
-    auto map = vector<vector<int>>(m + 1, vector<int>(n + 1, 0));
-    int i, j;
+	auto map = vector<vector<int>>(m + 1, vector<int>(n + 1, 0));
+	int i, j;
 
-    for (i = 1, j = 1; j <= n; ++j) {
-        map[i][j] = j;
-    }
+	for (i = 1, j = 1; j <= n; ++j) {
+		map[i][j] = j;
+	}
 
-    --j;
-    Dir direction = DOWN;
-    int hight = m, width = n, currentPositionInNum = n;
-    int numOfVisited = n;
+	--j;
+	Dir direction = DOWN;
+	int hight = m, width = n, currentPositionInNum = n;
+	int numOfVisited = n;
 
-    while(hight > 0 || width > 0) {
-        if(numOfVisited == m * n) {
-            break;
-        }
+	while (hight > 0 || width > 0) {
+		if (numOfVisited == m * n) {
+			break;
+		}
 
-        switch (direction) {
-            case UPPER:
-                --hight;
+		switch (direction) {
+		case UPPER:
+			--hight;
 
-                for (int cnt = 0; cnt < hight; ++cnt) {
-                    --i;
-                    ++currentPositionInNum;
-                    ++numOfVisited;
-                    map[i][j] = currentPositionInNum;
-                }
+			for (int cnt = 0; cnt < hight; ++cnt) {
+				--i;
+				++currentPositionInNum;
+				++numOfVisited;
+				map[i][j] = currentPositionInNum;
+			}
 
-                direction = RIGHT;
-                break;
+			direction = RIGHT;
+			break;
 
-            case DOWN:
-                --hight;
+		case DOWN:
+			--hight;
 
-                for (int cnt = 0; cnt < hight; ++cnt) {
-                    ++i;
-                    ++currentPositionInNum;
-                    ++numOfVisited;
-                    map[i][j] = currentPositionInNum;
-                }
+			for (int cnt = 0; cnt < hight; ++cnt) {
+				++i;
+				++currentPositionInNum;
+				++numOfVisited;
+				map[i][j] = currentPositionInNum;
+			}
 
-                direction = LEFT;
-                break;
+			direction = LEFT;
+			break;
 
-            case LEFT:
-                --width;
+		case LEFT:
+			--width;
 
-                for (int cnt = 0; cnt < width; ++cnt) {
-                    --j;
-                    ++currentPositionInNum;
-                    ++numOfVisited;
-                    map[i][j] = currentPositionInNum;
-                }
+			for (int cnt = 0; cnt < width; ++cnt) {
+				--j;
+				++currentPositionInNum;
+				++numOfVisited;
+				map[i][j] = currentPositionInNum;
+			}
 
-                direction = UPPER;
-                break;
+			direction = UPPER;
+			break;
 
-            case RIGHT:
-                --width;
+		case RIGHT:
+			--width;
 
-                for (int cnt = 0; cnt < width; ++cnt) {
-                    ++j;
-                    ++currentPositionInNum;
-                    ++numOfVisited;
-                    map[i][j] = currentPositionInNum;
-                }
+			for (int cnt = 0; cnt < width; ++cnt) {
+				++j;
+				++currentPositionInNum;
+				++numOfVisited;
+				map[i][j] = currentPositionInNum;
+			}
 
-                direction = DOWN;
-                break;
+			direction = DOWN;
+			break;
 
-            default:
-                break;
-        }
-    }
+		default:
+			break;
+		}
+	}
 
-    //print
+	//print
 
-    for (int i = 1; i <= m; ++i) {
-        for (int j = 1; j <= n; ++j) {
-            if (j != 1) {
-                cout << " ";
-            }
+	for (i = 1; i <= m; ++i) {
+		for (j = 1; j <= n; ++j) {
+			if (j != 1) {
+				cout << " ";
+			}
 
-            cout << num[map[i][j]];
-        }
+			cout << num[map[i][j]];
+		}
 
-        cout << endl;
-    }
+		cout << endl;
+	}
 }
 
 void compute(int &m, int &n, int N) {
-    m = sqrt(N);
+	m = static_cast<int>(sqrt(N));
 
-    while (N % m != 0) {
-        ++m;
-    }
+	while (N % m != 0) {
+		++m;
+	}
 
-    n = N / m;
+	n = N / m;
 
-    if (m < n) {
-        swap(m, n);
-    }
+	if (m < n) {
+		swap(m, n);
+	}
 }
 
 int main() {
-    #pragma region GET_INPUT
-    {
-        #ifndef ONLINE_JUDGE
-        freopen("test.in", "r", stdin);
-        freopen("test.out", "w", stdout);
-        #endif
-    }
-    #pragma endregion
-    int N;
-    cin >> N;
-    int m, n;
-    compute(m, n, N);
-    vector<int> num(N + 1, 0x7FFFFFFF);
+	#pragma region GET_INPUT
+	{
+#ifndef ONLINE_JUDGE
+		freopen("test.in", "r", stdin);
+		freopen("test.out", "w", stdout);
+#endif
+	}
+	#pragma endregion
+	int N;
+	cin >> N;
+	int m, n;
+	compute(m, n, N);
+	vector<int> num(N + 1, 0x7FFFFFFF);
+	printf("this is a test");
 
-    for (int i = 1; i <= N; ++i) {
-        cin >> num[i];
-    }
+	for (int i = 1; i <= N; ++i) {
+		cin >> num[i];
+	}
 
-    sort(num.begin(), num.end(), greater<int>());
-    print(num, m, n);
-    return 0;
+	sort(num.begin(), num.end(), greater<int>());
+	print(num, m, n);
+	return 0;
 }
