@@ -157,6 +157,8 @@ int main() {
             if (accRate > 1) {
                 isTry = true;
                 backup = radix_second;
+            } else {
+                isTry = false;
             }
 
             radix_second += accRate;
@@ -167,9 +169,8 @@ int main() {
                 break;
             }
 
-            isTry = false;
-            radix_second = backup + 1;
-            accRate = 1;
+            radix_second -= accRate / 2;
+            accRate /= 4;
         }
     }
 
