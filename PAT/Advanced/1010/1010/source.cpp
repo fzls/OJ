@@ -71,7 +71,7 @@ Impossible
 
 using namespace std;
 #pragma region DebugSetting
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
     #define debug(format, ...) printf("[line:%d:@%s] "format, __LINE__, __FUNCTION__, ##__VA_ARGS__)
@@ -109,24 +109,6 @@ long long getDecimal(string num, long long radix) {
 
 
 
-long long find_radix_by_binary_search(long long lowerBound, long long upperBound, string &second , long long first_in_decimal) {
-    if (lowerBound > upperBound) {
-        return 0x7FFFFFFFFFFFFFFF;
-    }
-
-    long long mid = lowerBound + (upperBound - lowerBound) / 2;
-    long long mid_in_dec = getDecimal(second, mid);
-    debug("mid_val : %lld\n", mid_in_dec);
-
-    if (mid_in_dec == first_in_decimal) {
-        return mid;
-    } else if (mid_in_dec < first_in_decimal) {
-        return find_radix_by_binary_search(mid + 1, upperBound, second, first_in_decimal);
-    } else {
-        return find_radix_by_binary_search(lowerBound, mid - 1, second, first_in_decimal);
-    }
-}
-
 int main() {
     #pragma region GET_INPUT
     {
@@ -148,10 +130,11 @@ int main() {
 
     //radix of first is known
     long long first_in_decimal = getDecimal(first, radix);
-    long long radix_second;
+    long long radix_second = 2;
     long long upperBound = first_in_decimal >= 36 ? first_in_decimal : 36;
-    long long lowerBound = 2;
-    radix_second = find_radix_by_binary_search(lowerBound, upperBound, second, first_in_decimal);
+
+    for (; radix_second <= upperBound && getDecimal(second, radix_second) != first_in_decimal; ++radix_second)
+        ;
 
     if (radix_second > upperBound) {
         cout << "Impossible" << endl;
