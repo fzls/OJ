@@ -91,21 +91,84 @@ void setTable() {
     }
 }
 long long getDecimal(string num, long long radix) {
-    long long res = 0, tmp;
+    long long res = 0;
 
     for (long long i = 0; i < num.size(); ++i) {
-        tmp = table[num[i]];
-
-        if (tmp >= radix) {
-            res = -1;
-            break;
-        }
-
-        res = res * radix + tmp;
+        res = res * radix + table[num[i]];
     }
 
     return res;
 }
+
+
+
+int compare(string &num, long long radix, long long first_in_decimal) {
+    long long res = 0;
+
+    for (long long i = 0; i < num.size(); ++i) {
+        res = res * radix + table[num[i]];
+
+        if (res > first_in_decimal) {
+            return 1;
+        }
+    }
+
+    if (first_in_decimal == res) {
+        return 0;
+    } else if (first_in_decimal < res) {
+        return 1;
+    } else {
+        return -1;
+    }
+}
+
+long long find_radix_by_binary_search(long long lowerBound, long long upperBound, string &second, long long first_in_decimal, bool flag) {
+    if (lowerBound > upperBound) {
+        return -1;
+    }
+
+    long long mid = lowerBound + (upperBound - lowerBound) / 2;
+
+    if(flag) {
+        flag = false;
+        mid = lowerBound;
+    }
+
+    int cmp = compare(second, mid, first_in_decimal);//avoid overflow
+
+    if (cmp == 0) {
+        long long left = find_radix_by_binary_search(lowerBound, mid - 1, second, first_in_decimal, flag);
+
+        if (left != -1) {
+            mid = min(mid, left);
+        }
+
+        return mid;
+    } else if (cmp == -1) {
+        return find_radix_by_binary_search(mid + 1, upperBound, second, first_in_decimal, flag);
+    } else {
+        return find_radix_by_binary_search(lowerBound, mid - 1, second, first_in_decimal, flag);
+    }
+}
+//
+//long long find_radix_by_binary_search(long long low, long long high, string &second, long long key) {
+//    long long mid = low;
+//    long long tmp;
+//
+//    while (low <= high) {
+//        tmp = compare(second, mid, key);
+//
+//        if (tmp > 0) {
+//            high = mid - 1;
+//        } else if (tmp < 0) {
+//            low = mid + 1;
+//        } else { return mid; }
+//
+//        mid =low+ (high - low)/2;
+//    }
+//
+//    return -1;
+//}
 
 
 
@@ -130,13 +193,18 @@ int main() {
 
     //radix of first is known
     long long first_in_decimal = getDecimal(first, radix);
-    long long radix_second = 2;
-    long long upperBound = first_in_decimal >= 36 ? first_in_decimal : 36;
+    long long radix_second;
+    long long lowerBound = 0;
 
-    for (; radix_second <= upperBound && getDecimal(second, radix_second) != first_in_decimal; ++radix_second)
-        ;
+    for (int i = 0; i < second.size(); ++i)
+        if (!(table[second[i]] < lowerBound)) {
+            lowerBound = table[second[i]] + 1;
+        }
 
-    if (radix_second > upperBound) {
+    long long upperBound = first_in_decimal >= lowerBound ? first_in_decimal + 1 : lowerBound + 1;
+    radix_second = find_radix_by_binary_search(lowerBound, upperBound, second, first_in_decimal, true);
+
+    if (radix_second == -1) {
         cout << "Impossible" << endl;
     } else {
         cout << radix_second << endl;
