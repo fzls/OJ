@@ -130,13 +130,52 @@ int main() {
 
     //radix of first is known
     long long first_in_decimal = getDecimal(first, radix);
-    long long radix_second = 2;
-    long long upperBound = first_in_decimal >= 36 ? first_in_decimal : 36;
+    long long lowerBound = 2;
 
-    for (; radix_second <= upperBound && getDecimal(second, radix_second) != first_in_decimal; ++radix_second)
-        ;
+    for (int i = 0; i < second.size(); ++i) {
+        if (table[second[i]] + 1 > lowerBound) {
+            lowerBound = table[second[i]] + 1;
+        }
+    }
 
-    if (radix_second > upperBound) {
+    long long upperBound = first_in_decimal >= lowerBound ? first_in_decimal : lowerBound;
+    long long radix_second = lowerBound;
+    long long accRate = 1;
+    long long backup = 0;
+    bool isTry = false;
+
+    //线性搜索在基数很大时，运行效率会很低，可以使用二分法
+    //但也可以使用如下的通过设定一个加速度并结合回溯法来提高效率
+    while(true) {
+        long long second_in_decimal = getDecimal(second, radix_second);
+
+        if(second_in_decimal == first_in_decimal) {
+            break;
+        }
+
+        if(second_in_decimal < first_in_decimal) {
+            if (accRate > 1) {
+                isTry = true;
+                backup = radix_second;
+            }
+
+            radix_second += accRate;
+            accRate *= 2;
+            //          radix_second += accRate;
+        } else {
+            if(!isTry) {
+                break;
+            }
+
+            isTry = false;
+            radix_second = backup + 1;
+            accRate = 1;
+        }
+    }
+
+    bool isPossiable = getDecimal(second, radix_second) == first_in_decimal;
+
+    if (!isPossiable) {
         cout << "Impossible" << endl;
     } else {
         cout << radix_second << endl;
