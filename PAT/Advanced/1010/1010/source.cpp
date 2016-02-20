@@ -193,6 +193,7 @@ int main() {
 
     //radix of first is known
     long long first_in_decimal = getDecimal(first, radix);
+<<<<<<< HEAD
     long long radix_second;
     long long lowerBound = 0;
 
@@ -205,6 +206,55 @@ int main() {
     radix_second = find_radix_by_binary_search(lowerBound, upperBound, second, first_in_decimal, true);
 
     if (radix_second == -1) {
+=======
+    long long lowerBound = 2;
+
+    for (int i = 0; i < second.size(); ++i) {
+        if (table[second[i]] + 1 > lowerBound) {
+            lowerBound = table[second[i]] + 1;
+        }
+    }
+
+    long long upperBound = first_in_decimal >= lowerBound ? first_in_decimal : lowerBound;
+    long long radix_second = lowerBound;
+    long long accRate = 1;
+    long long backup = 0;
+    bool isTry = false;
+
+    //线性搜索在基数很大时，运行效率会很低，可以使用二分法
+    //但也可以使用如下的通过设定一个加速度并结合回溯法来提高效率
+    while(true) {
+        long long second_in_decimal = getDecimal(second, radix_second);
+
+        if(second_in_decimal == first_in_decimal) {
+            break;
+        }
+
+        if(second_in_decimal < first_in_decimal) {
+            if (accRate > 1) {
+                isTry = true;
+                backup = radix_second;
+            } else {
+                isTry = false;
+            }
+
+            radix_second += accRate;
+            accRate *= 2;
+            //          radix_second += accRate;
+        } else {
+            if(!isTry) {
+                break;
+            }
+
+            radix_second -= accRate / 2;
+            accRate /= 4;
+        }
+    }
+
+    bool isPossiable = getDecimal(second, radix_second) == first_in_decimal;
+
+    if (!isPossiable) {
+>>>>>>> add_aceratoer_1010
         cout << "Impossible" << endl;
     } else {
         cout << radix_second << endl;
