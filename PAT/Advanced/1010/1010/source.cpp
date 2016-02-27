@@ -74,9 +74,9 @@ using namespace std;
 //#define DEBUG
 
 #ifdef DEBUG
-    #define debug(format, ...) printf("[line:%d:@%s] "format, __LINE__, __FUNCTION__, ##__VA_ARGS__)
+#define debug(format, ...) printf("[line:%d:@%s] "format, __LINE__, __FUNCTION__, ##__VA_ARGS__)
 #else
-    #define debug(...)
+#define debug(...)
 #endif
 #pragma endregion
 
@@ -129,7 +129,7 @@ long long find_radix_by_binary_search(long long lowerBound, long long upperBound
 
     long long mid = lowerBound + (upperBound - lowerBound) / 2;
 
-    if(flag) {
+    if (flag) {
         flag = false;
         mid = lowerBound;
     }
@@ -175,10 +175,10 @@ long long find_radix_by_binary_search(long long lowerBound, long long upperBound
 int main() {
     #pragma region GET_INPUT
     {
-        #ifndef ONLINE_JUDGE
+#ifndef ONLINE_JUDGE
         freopen("test.in", "r", stdin);
         freopen("test.out", "w", stdout);
-        #endif
+#endif
     }
     #pragma endregion
     setTable();
@@ -193,20 +193,6 @@ int main() {
 
     //radix of first is known
     long long first_in_decimal = getDecimal(first, radix);
-<<<<<<< HEAD
-    long long radix_second;
-    long long lowerBound = 0;
-
-    for (int i = 0; i < second.size(); ++i)
-        if (!(table[second[i]] < lowerBound)) {
-            lowerBound = table[second[i]] + 1;
-        }
-
-    long long upperBound = first_in_decimal >= lowerBound ? first_in_decimal + 1 : lowerBound + 1;
-    radix_second = find_radix_by_binary_search(lowerBound, upperBound, second, first_in_decimal, true);
-
-    if (radix_second == -1) {
-=======
     long long lowerBound = 2;
 
     for (int i = 0; i < second.size(); ++i) {
@@ -226,11 +212,11 @@ int main() {
     while(true) {
         long long second_in_decimal = getDecimal(second, radix_second);
 
-        if(second_in_decimal == first_in_decimal) {
+        if (second_in_decimal == first_in_decimal) {
             break;
         }
 
-        if(second_in_decimal < first_in_decimal) {
+        if (second_in_decimal < first_in_decimal) {
             if (accRate > 1) {
                 isTry = true;
                 backup = radix_second;
@@ -242,19 +228,18 @@ int main() {
             accRate *= 2;
             //          radix_second += accRate;
         } else {
-            if(!isTry) {
+            if (!isTry) {
                 break;
             }
-
             radix_second -= accRate / 2;
             accRate /= 4;
+
         }
     }
 
     bool isPossiable = getDecimal(second, radix_second) == first_in_decimal;
 
     if (!isPossiable) {
->>>>>>> add_aceratoer_1010
         cout << "Impossible" << endl;
     } else {
         cout << radix_second << endl;
