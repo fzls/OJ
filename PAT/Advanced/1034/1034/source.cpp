@@ -136,7 +136,13 @@ struct Graph {
     vector<int> times;
     vector<vector<bool>> visited;
     vector<bool> visited_peo;
-    Graph(): guys(MAX_SIZE), times(MAX_SIZE, 0), visited(MAX_SIZE, vector<bool>(MAX_SIZE, false)), visited_peo(MAX_SIZE, false) {
+    Graph(int _v)
+        : v{ _v },
+          guys(_v),
+          id_to_name(_v),
+          times(_v, 0),
+          visited(_v, vector<bool>(_v, false)),
+          visited_peo(_v, false) {
     }
 
     void findGangs(int threshold) {
@@ -183,6 +189,7 @@ struct Graph {
 
         visited_peo[v] = true;
 
+        // a little different to other dfs, we traversal every edge rather than vertex
         for (auto nv : guys[v]) {
             if (!visited[v][nv.peo]) {
                 totalTime += nv.time;
@@ -200,7 +207,16 @@ struct Graph {
 
 
 };
+struct Input {
+    string v1, v2;
+    int time;
 
+    Input(string v1, string v2, int time)
+        : v1(v1),
+          v2(v2),
+          time(time) {
+    }
+};
 int main() {
     #pragma region GET_INPUT
     {
@@ -214,7 +230,7 @@ int main() {
     cin >> n >> k;
     int cnt = 0;
     map<string, int> name_to_id;
-    Graph graph;
+    vector<Input> inputs;
 
     for (int t = 0; t < n; ++t) {
         string v1, v2;
@@ -223,20 +239,26 @@ int main() {
 
         if (name_to_id.find(v1) == name_to_id.end()) {
             name_to_id[v1] = cnt;
-            graph.id_to_name.push_back(v1);
             cnt++;
         }
 
         if (name_to_id.find(v2) == name_to_id.end()) {
             name_to_id[v2] = cnt;
-            graph.id_to_name.push_back(v2);
             cnt++;
         }
 
-        graph.guys[name_to_id[v1]].push_back(Record(name_to_id[v2], time));
+        inputs.push_back(move(Input(v1, v2, time)));
     }
 
-    graph.v = cnt;
+    //to avoid vector index out of ***, calculate the vertexs first
+    Graph graph(cnt);
+
+    for(auto input : inputs) {
+        graph.id_to_name[name_to_id[input.v1]] = input.v1;
+        graph.id_to_name[name_to_id[input.v2]] = input.v2;
+        graph.guys[name_to_id[input.v1]].push_back(Record(name_to_id[input.v2], input.time));
+    }
+
     graph.findGangs(k);
     return 0;
 }
