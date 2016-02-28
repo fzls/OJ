@@ -96,33 +96,20 @@ using namespace std;
     #define debug(...)
 #endif
 #pragma endregion
-//?+ due to the low speed of cin and cout , we have to use printf
-//?+ and scanf which not support c++ string, so we have to use
-//?+ char* instead, which map seems to not support,so we have to
-//?+ make a simple direct hash table to do this
 
 const int INF = 0x7FFFFFFF;
-const int MAX_SIZE = 26 * 26 * 26 * 26;
-int myhash(char s[]) {
-    int h = 0;
-
-    for (int i = 0; i <= 2; ++i) {
-        h = h * 26 + (s[i] - 'A');
-    }
-
-    h = h * 26 + s[3] - '0';
-    return h;
-}
 
 struct Student {
-    char name[5];
+    string name;
     set<int> courses;
 
-
+    explicit Student(string name = string())
+        : name(name) {
+    }
 };
-int name2idx[MAX_SIZE];
+
 void print(Student &student) {
-    printf("%s %d", student.name, student.courses.size());
+    printf("%s %d", student.name.c_str(), student.courses.size());
 
     for (auto c : student.courses) {
         printf(" %d", c);
@@ -140,10 +127,10 @@ int main() {
         #endif
     }
     #pragma endregion
-    memset(name2idx, -1, sizeof(name2idx));
     int n, c;
     scanf("%d%d", &n, &c);
     vector<Student> students;
+    unordered_map<string, int> name2idx;
     int cnt = 0;
 
     for (int i = 1; i <= c; ++i) {
@@ -151,34 +138,31 @@ int main() {
         scanf("%d%d", &index, &s);
 
         for (int j = 0; j < s; ++j) {
-            char name[5];
-            scanf("%s", name);
-            //serilize
-            int idx = name2idx[myhash(name)];
+            char name_c[5];
+            scanf("%s", name_c);
+            string name(name_c);
 
-            if(idx == -1) {
-                name2idx[myhash(name)] = cnt;
-                idx = cnt;
-                Student tmp;
-                strcpy(tmp.name, name);
-                students.push_back(move(tmp));
+            //serilize
+            if (name2idx.find(name) == name2idx.end()) {
+                name2idx[name] = cnt;
+                students.push_back(Student(name));
                 ++cnt;
             }
 
             //add course
-            students[idx].courses.insert(index);
+            students[name2idx[name]].courses.insert(index);
         }
     }
 
     for (int i = 0; i < n; ++i) {
-        char query[5];
-        scanf("%s", query);
-        int idx = name2idx[myhash(query)];
+        char query_c[5];
+        scanf("%s", query_c);
+        string query(query_c);
 
-        if(idx != -1) {
-            print(students[idx]);
+        if (name2idx.find(query) != name2idx.end()) {
+            print(students[name2idx[query]]);
         } else {
-            printf("%s 0\n", query);
+            printf("%s 0\n", query_c);
         }
     }
 
