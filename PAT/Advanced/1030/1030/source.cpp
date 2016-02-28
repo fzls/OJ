@@ -115,7 +115,15 @@ struct City {
 
 
 };
+struct HeapUtil {
+    int id;
+    int key;
 
+    HeapUtil(int id, int key)
+        : id(id),
+          key(key) {
+    }
+};
 void City::find_Shortest_Path_With_Min_Cost_And_Print(int source, int destination) {
     vector<int> min_dis(vertex, INF >> 2);
     vector<int> min_cost(vertex, INF >> 2);
@@ -126,20 +134,26 @@ void City::find_Shortest_Path_With_Min_Cost_And_Print(int source, int destinatio
     min_cost[source] = 0;
     path[source] = source;
     //?using heap to get min
-    vector<int> remaining;
+    auto cmp = [&](const HeapUtil & a, const HeapUtil & b) { return a.key > b.key; };
+    //    vector<HeapUtil> remaining;
+    priority_queue<HeapUtil, vector<HeapUtil>, decltype(cmp)> remaining(cmp);
 
     for (int i = 0; i < vertex; ++i) {
-        remaining.push_back(i);
+        remaining.push(HeapUtil(i, min_dis[i]));
     }
 
-    auto cmp = [&](int a, int b) { return min_dis[a] > min_dis[b]; };
-    make_heap(remaining.begin(), remaining.end(), cmp);
+    //    make_heap(remaining.begin(), remaining.end(), cmp);
 
     for (int i = 0; i < vertex; ++i) {
         //find min dis in unlabeled
-        int v = remaining[0];
-        pop_heap(remaining.begin(), remaining.end(), cmp);
-        remaining.pop_back();
+        //ignore labeled ones until find min and pop it
+        int v;
+
+        do {
+            v = remaining.top().id;
+            remaining.pop();
+        } while (labeled[v]);
+
         //label this city
         labeled[v] = true;
 
@@ -155,7 +169,9 @@ void City::find_Shortest_Path_With_Min_Cost_And_Print(int source, int destinatio
             int cost = min_cost[v] + adj.cost;
 
             if (dis < min_dis[nc]) {
-                min_dis[nc] = dis;
+                min_dis[nc] = dis;// should decrease key
+                //?or we can simply add the new value to rem
+                remaining.push(HeapUtil(nc, dis));
                 min_cost[nc] = cost;
                 path[nc] = v;
             } else if (dis == min_dis[nc] && cost < min_cost[nc]) {
@@ -165,7 +181,7 @@ void City::find_Shortest_Path_With_Min_Cost_And_Print(int source, int destinatio
         }
 
         //after update, resume heap proprity
-        make_heap(remaining.begin(), remaining.end(), cmp);
+        //        make_heap(remaining.begin(), remaining.end(), cmp);
     }
 
     print_path(destination, path, source);
