@@ -111,8 +111,6 @@ struct City {
 
     void find_Shortest_Path_With_Min_Cost_And_Print(int s, int d);
 
-    int find_min_dis_unlabeled(vector<int> &min_dis, vector<bool> &labeld);
-
     void print_path(int cv, vector<int> &path, int source);
 
 
@@ -127,18 +125,29 @@ void City::find_Shortest_Path_With_Min_Cost_And_Print(int source, int destinatio
     min_dis[source] = 0;
     min_cost[source] = 0;
     path[source] = source;
+    //?using heap to get min
+    vector<int> remaining;
+
+    for (int i = 0; i < vertex; ++i) {
+        remaining.push_back(i);
+    }
+
+    auto cmp = [&](int a, int b) { return min_dis[a] > min_dis[b]; };
+    make_heap(remaining.begin(), remaining.end(), cmp);
 
     for (int i = 0; i < vertex; ++i) {
         //find min dis in unlabeled
-        int v = find_min_dis_unlabeled(min_dis, labeled);
+        int v = remaining[0];
+        pop_heap(remaining.begin(), remaining.end(), cmp);
+        remaining.pop_back();
         //label this city
         labeled[v] = true;
 
         //update unlabeled adj if any
-        for(auto &adj : citys[v]) {
+        for (auto &adj : citys[v]) {
             int nc = adj.city;
 
-            if(labeled[nc]) {//ignore labeled one
+            if (labeled[nc]) { //ignore labeled one
                 continue;
             }
 
@@ -154,27 +163,13 @@ void City::find_Shortest_Path_With_Min_Cost_And_Print(int source, int destinatio
                 path[nc] = v;
             }
         }
+
+        //after update, resume heap proprity
+        make_heap(remaining.begin(), remaining.end(), cmp);
     }
 
     print_path(destination, path, source);
     cout << min_dis[destination] << " " << min_cost[destination] << endl;
-}
-
-int City::find_min_dis_unlabeled(vector<int> &min_dis, vector<bool> &labeled) {
-    int idx = 0;
-
-    // find first unlabeled
-    for (; labeled[idx]; ++idx)
-        ;
-
-    //find min unlabeled
-    for (int i = idx + 1; i < vertex; ++i) {
-        if (!labeled[i] && min_dis[i] < min_dis[idx]) {
-            idx = i;
-        }
-    }
-
-    return idx;
 }
 
 void City::print_path(int cv, vector<int> &path, int source) {
