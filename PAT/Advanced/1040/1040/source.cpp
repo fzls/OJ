@@ -140,7 +140,45 @@ int lss2(const string &str) {
 
     return longest;
 }
+// //二，Manacher 算法复杂度分析
+// 下面简单分析下为何Manacher 算法是线性时间的。
+// 设字符串长度为n。
+// 结合上面的分析以及关键部分代码来看，重点当j回文串不包含在id回文串内部时，当前迭代的运算次数不固定，对应代码的第46、47行。
+// 此时，只要46、47行代码执行超过一次，求得的i回文串的右边界将大于id回文串的右边界，id和mi 将更新为更大的值；mi 最多通过n 次更新达到最大值n-1，自此以后，每轮迭代都只有常数次运算。
+// 简单来说，46、47行代码运行的总次数不会超过最终mi 的值，即n-1，所以该算法的时间复杂度为：
+// O(n) + O(n) = O(n)
+//
 
+//DP1
+int lss_dp(string s) {
+    int n = s.size();
+    vector<vector<bool>> p(n, vector<bool>(n, false));
+    //deal with base case (length of 1 and 2)
+    int length = 0;
+
+    for (int i = 0; i < n; ++i) {
+        p[i][i] = true;
+        length = 1;
+    }
+
+    for (int i = 0; i < n - 1; ++i) {
+        if(s[i] == s[i + 1]) {
+            p[i][i + 1] = true;
+            length = 2;
+        }
+    }
+
+    //other case
+    for (int l = 3; l <= n; ++l)
+        for (int i = 0, j = l - 1; j < n; ++i, ++j) {
+            if(s[i] == s[j] && p[i + 1][j - 1]) {
+                p[i][j] = true;
+                length = l;
+            }
+        }
+
+    return length;
+}
 int main() {
     #pragma region GET_INPUT
     {
@@ -152,6 +190,6 @@ int main() {
     #pragma endregion
     string str;
     getline(cin, str);
-    cout << lss2(str) << endl;
+    cout << lss_dp(str) << endl;
     return 0;
 }
